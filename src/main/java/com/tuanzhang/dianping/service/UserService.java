@@ -1,4 +1,4 @@
 package com.tuanzhang.dianping.service;
 
-public class UserService {
+public interface UserService {
 }
