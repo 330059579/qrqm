@@ -1,5 +1,6 @@
 package com.tuanzhang.dianping.common;
 
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -13,15 +14,19 @@ public class ClobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     @ResponseBody
-    public CommonRes doError(HttpServletRequest request, HttpServletResponse response, Exception ex){
-        if (ex instanceof BusinessException) {
-            return CommonRes.create(((BusinessException) ex).getCommonError(),"fail");
+    public CommonRes doError(HttpServletRequest servletRequest, HttpServletResponse httpServletResponse,Exception ex){
+        if(ex instanceof BusinessException){
+            return CommonRes.create(((BusinessException)ex).getCommonError(),"fail");
         }else if(ex instanceof NoHandlerFoundException){
+            CommonError commonError = new CommonError(EmBusinessError.NO_HANDLER_FOUND);
+            return CommonRes.create(commonError,"fail");
+        }else if(ex instanceof ServletRequestBindingException){
             CommonError commonError = new CommonError(EmBusinessError.BIND_EXCEPTION_ERROR);
             return CommonRes.create(commonError,"fail");
-        }else {
-            CommonError commonError = new CommonError(EmBusinessError.UNKNOW_ERROR);
-            return CommonRes.create(commonError);
+        } else {
+            CommonError commonError = new CommonError(EmBusinessError.UNKNOWN_ERROR);
+            return CommonRes.create(commonError,"fail");
         }
+
     }
 }

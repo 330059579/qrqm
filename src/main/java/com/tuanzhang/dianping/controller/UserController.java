@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 
@@ -33,10 +34,18 @@ public class UserController {
         User user = userService.getUser(id);
         if(user == null){
             //return CommonRes.create(new CommonError(EmBusinessError.NO_OBJECT_FOUND),"fail");
-            throw new BusinessException(EmBusinessError.UNKNOW_ERROR);
+            throw new BusinessException(EmBusinessError.NO_OBJECT_FOUND);
         }else{
             return CommonRes.create(user);
         }
+    }
+
+    @RequestMapping("/index")
+    public ModelAndView index(){
+        String userName = "tuanzhang";
+        ModelAndView modelAndView = new ModelAndView("/index.html");
+        modelAndView.addObject("name",userName);
+        return modelAndView;
     }
 
 }

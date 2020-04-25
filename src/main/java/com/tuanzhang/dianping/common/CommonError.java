@@ -12,7 +12,7 @@ public class CommonError {
     }
 
     public CommonError(EmBusinessError emBusinessError){
-        this.errCode = emBusinessError.getErrorCode();
+        this.errCode = emBusinessError.getErrCode();
         this.errorMsg = emBusinessError.getErrMsg();
     }
 
