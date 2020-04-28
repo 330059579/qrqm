@@ -62,6 +62,12 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    @Override
+    public Integer countAllUser() {
+        UserExample example = new UserExample();
+        return userDAO.countByExample(example);
+    }
+
 
     public User getInfo(String telphone){
         UserExample example = new UserExample();
