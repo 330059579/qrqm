@@ -6,8 +6,10 @@ import com.tuanzhang.dianping.model.Seller;
 import com.tuanzhang.dianping.model.SellerExample;
 import com.tuanzhang.dianping.service.SellerService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -18,7 +20,10 @@ public class SellerServiceImpl implements SellerService {
 
 
     @Override
+    @Transactional
     public Seller create(Seller sellerModel) {
+        sellerModel.setRemarkScore(new BigDecimal(0));
+        sellerModel.setDisabledFlag(0);
         sellerDAO.insertSelective(sellerModel);
         return sellerModel;
     }
