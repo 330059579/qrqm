@@ -13,7 +13,10 @@ public enum  EmBusinessError {
     REGISTER_DUP_FAIL(20001,"用户已存在"),
 
     LOGIN_FAIL(20002,"手机号或密码错误"),
-    ADMON_SHOULT_LOGIN(30002, "管理员需要登录");
+    ADMON_SHOULT_LOGIN(30002, "管理员需要登录"),
+
+    //品类相关错误
+    CATEGORY_NAME_DUPLOCATED(40001, "品类名称已存在");
 
     private Integer errCode;
 
