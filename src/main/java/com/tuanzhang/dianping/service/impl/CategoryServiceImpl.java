@@ -42,6 +42,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<Category> selectAll() {
         CategoryExample example = new CategoryExample();
+        example.setOrderByClause("sort asc");
         return categoryDAO.selectByExample(example);
     }
 }
