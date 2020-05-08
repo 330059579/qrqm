@@ -4,6 +4,7 @@ import com.tuanzhang.dianping.common.BusinessException;
 import com.tuanzhang.dianping.dal.SellerDAO;
 import com.tuanzhang.dianping.model.Seller;
 import com.tuanzhang.dianping.model.SellerExample;
+import com.tuanzhang.dianping.model.UserExample;
 import com.tuanzhang.dianping.service.SellerService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,5 +47,11 @@ public class SellerServiceImpl implements SellerService {
         seller.setDisabledFlag(disabledFlag);
         sellerDAO.updateByPrimaryKeySelective(seller);
         return seller;
+    }
+
+    @Override
+    public Integer countAllSeller() {
+        SellerExample example = new SellerExample();
+        return sellerDAO.countByExample(example);
     }
 }

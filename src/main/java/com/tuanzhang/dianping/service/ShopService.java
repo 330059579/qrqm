@@ -13,4 +13,6 @@ public interface ShopService {
     Shop get(Integer id);
 
     List<Shop> selectAll();
+
+    Integer countAllShop();
 }

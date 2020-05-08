@@ -3,6 +3,9 @@ package com.tuanzhang.dianping.controller.admin;
 import com.tuanzhang.dianping.common.AdminPermission;
 import com.tuanzhang.dianping.common.BusinessException;
 import com.tuanzhang.dianping.common.EmBusinessError;
+import com.tuanzhang.dianping.service.CategoryService;
+import com.tuanzhang.dianping.service.SellerService;
+import com.tuanzhang.dianping.service.ShopService;
 import com.tuanzhang.dianping.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,6 +38,12 @@ public class AdminController {
 
     @Resource
     private UserService userService;
+    @Resource
+    private SellerService sellerService;
+    @Resource
+    private ShopService shopService;
+    @Resource
+    private CategoryService categoryService;
 
     public static final String CURRENT_ADMIN_SESSION = "currentAdminSession";
 
@@ -44,6 +53,9 @@ public class AdminController {
     public ModelAndView index(){
         ModelAndView modelAndView = new ModelAndView("/admin/admin/index");
         modelAndView.addObject("userCount",userService.countAllUser());
+        modelAndView.addObject("shopCount",shopService.countAllShop());
+        modelAndView.addObject("sellerCount",sellerService.countAllSeller());
+        modelAndView.addObject("categoryCount",categoryService.countAllCategory());
         modelAndView.addObject("CONTROLLER_NAME","admin");
         modelAndView.addObject("ACTION_NAME","index");
         return modelAndView;

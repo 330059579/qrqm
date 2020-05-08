@@ -71,4 +71,10 @@ public class ShopServiceImpl implements ShopService {
         });
         return shops;
     }
+
+    @Override
+    public Integer countAllShop() {
+        ShopExample example = new ShopExample();
+        return shopDAO.countByExample(example);
+    }
 }

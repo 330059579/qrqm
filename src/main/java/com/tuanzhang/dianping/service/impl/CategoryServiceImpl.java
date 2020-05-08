@@ -45,4 +45,10 @@ public class CategoryServiceImpl implements CategoryService {
         example.setOrderByClause("sort asc");
         return categoryDAO.selectByExample(example);
     }
+
+    @Override
+    public Integer countAllCategory() {
+        CategoryExample example = new CategoryExample();
+        return categoryDAO.countByExample(example);
+    }
 }
