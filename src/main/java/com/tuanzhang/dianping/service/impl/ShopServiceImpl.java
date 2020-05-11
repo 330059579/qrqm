@@ -1,8 +1,10 @@
 package com.tuanzhang.dianping.service.impl;
 
 import com.tuanzhang.dianping.common.BusinessException;
+import com.tuanzhang.dianping.common.CommonUtil;
 import com.tuanzhang.dianping.common.EmBusinessError;
 import com.tuanzhang.dianping.dal.ShopDAO;
+import com.tuanzhang.dianping.info.Point2D;
 import com.tuanzhang.dianping.model.Category;
 import com.tuanzhang.dianping.model.Seller;
 import com.tuanzhang.dianping.model.Shop;
@@ -13,8 +15,11 @@ import com.tuanzhang.dianping.service.ShopService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service("shopService")
 public class ShopServiceImpl implements ShopService {
@@ -76,5 +81,22 @@ public class ShopServiceImpl implements ShopService {
     public Integer countAllShop() {
         ShopExample example = new ShopExample();
         return shopDAO.countByExample(example);
+    }
+
+    @Override
+    public List<Shop> recommend(BigDecimal longitude, BigDecimal latitude) {
+        ShopExample example = new ShopExample();
+        List<Shop> shops = shopDAO.selectByExample(example);
+        shops.forEach(u -> {
+            Point2D pointA = new Point2D(longitude, latitude);
+            Point2D pointb = new Point2D(u.getLongitude(), u.getLatitude());
+            double distance = CommonUtil.getDistance(pointA, pointb);
+            u.setDistance((int)distance);
+            u.setSort(0.95 * 1 / Math.log10(u.getDistance()) + 0.05 * u.getRemarkScore().doubleValue() / 5);
+            u.setSeller(sellerService.get(u.getSellerId()));
+            u.setCategory(categoryService.get(u.getCategoryId()));
+        });
+
+        return shops.stream().sorted(Comparator.comparingDouble(Shop::getSort).reversed()).collect(Collectors.toList());
     }
 }

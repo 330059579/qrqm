@@ -33,7 +33,7 @@ public class Seller implements Serializable {
     /**
      * 
      */
-    private Date update;
+    private Date updateTime;
 
     /**
      * seller
@@ -122,17 +122,17 @@ public class Seller implements Serializable {
 
     /**
      * 
-     * @return update 
+     * @return update_time 
      */
-    public Date getUpdate() {
-        return update;
+    public Date getUpdateTime() {
+        return updateTime;
     }
 
     /**
      * 
-     * @param update 
+     * @param updateTime 
      */
-    public void setUpdate(Date update) {
-        this.update = update;
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }

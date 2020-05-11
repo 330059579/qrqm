@@ -7,7 +7,7 @@
     <result column="remark_score" property="remarkScore" jdbcType="DECIMAL" />
     <result column="disabled_flag" property="disabledFlag" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-    <result column="update" property="update" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -68,7 +68,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, `name`, remark_score, disabled_flag, create_time, `update`
+    id, `name`, remark_score, disabled_flag, create_time, update_time
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.tuanzhang.dianping.model.SellerExample" >
     select
@@ -108,9 +108,9 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into seller (`name`, remark_score, disabled_flag, 
-      create_time, `update`)
+      create_time, update_time)
     values (#{name,jdbcType=VARCHAR}, #{remarkScore,jdbcType=DECIMAL}, #{disabledFlag,jdbcType=INTEGER}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{update,jdbcType=TIMESTAMP})
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.tuanzhang.dianping.model.Seller" >
     <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
@@ -130,8 +130,8 @@
       <if test="createTime != null" >
         create_time,
       </if>
-      <if test="update != null" >
-        `update`,
+      <if test="updateTime != null" >
+        update_time,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -147,8 +147,8 @@
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="update != null" >
-        #{update,jdbcType=TIMESTAMP},
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -176,8 +176,8 @@
       <if test="record.createTime != null" >
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.update != null" >
-        `update` = #{record.update,jdbcType=TIMESTAMP},
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -191,7 +191,7 @@
       remark_score = #{record.remarkScore,jdbcType=DECIMAL},
       disabled_flag = #{record.disabledFlag,jdbcType=INTEGER},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      `update` = #{record.update,jdbcType=TIMESTAMP}
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -211,8 +211,8 @@
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="update != null" >
-        `update` = #{update,jdbcType=TIMESTAMP},
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -223,7 +223,7 @@
       remark_score = #{remarkScore,jdbcType=DECIMAL},
       disabled_flag = #{disabledFlag,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      `update` = #{update,jdbcType=TIMESTAMP}
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

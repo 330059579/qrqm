@@ -83,6 +83,10 @@ public class Shop implements Serializable {
     private Category category;
 
     private Seller seller;
+
+    private Integer distance;
+
+    private Double sort;
     /**
      * shop
      */
@@ -342,5 +346,22 @@ public class Shop implements Serializable {
 
     public void setSeller(Seller seller) {
         this.seller = seller;
+    }
+
+
+    public Integer getDistance() {
+        return distance;
+    }
+
+    public void setDistance(Integer distance) {
+        this.distance = distance;
+    }
+
+    public Double getSort() {
+        return sort;
+    }
+
+    public void setSort(Double sort) {
+        this.sort = sort;
     }
 }
