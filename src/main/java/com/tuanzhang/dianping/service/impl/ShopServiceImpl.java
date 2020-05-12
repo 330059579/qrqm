@@ -13,12 +13,11 @@ import com.tuanzhang.dianping.service.CategoryService;
 import com.tuanzhang.dianping.service.SellerService;
 import com.tuanzhang.dianping.service.ShopService;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service("shopService")
@@ -98,5 +97,69 @@ public class ShopServiceImpl implements ShopService {
         });
 
         return shops.stream().sorted(Comparator.comparingDouble(Shop::getSort).reversed()).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Shop> search(BigDecimal longitude, BigDecimal latitude, String keyword, Integer orderBy, Integer categoryId, String tags) {
+        ShopExample shopExample = new ShopExample();
+        ShopExample.Criteria criteria = shopExample.createCriteria();
+        criteria.andNameLike("%" + keyword+ "%");
+        if (null != categoryId) {
+            criteria.andCategoryIdEqualTo(categoryId);
+        }
+
+        if (!StringUtils.isEmpty(tags)) {
+            criteria.andTagsEqualTo(tags);
+        }
+        List<Shop> shops = shopDAO.selectByExample(shopExample);
+        shops.forEach(u -> {
+            Point2D pointA = new Point2D(longitude, latitude);
+            Point2D pointb = new Point2D(u.getLongitude(), u.getLatitude());
+            double distance = CommonUtil.getDistance(pointA, pointb);
+            u.setDistance((int)distance);
+            u.setSort(0.95 * 1 / Math.log10(u.getDistance()) + 0.05 * u.getRemarkScore().doubleValue() / 5);
+            u.setSeller(sellerService.get(u.getSellerId()));
+            u.setCategory(categoryService.get(u.getCategoryId()));
+        });
+
+        if (null != orderBy && 1 == orderBy) {
+            return shops.stream().sorted(Comparator.comparingDouble(Shop::getPricePerMan)).collect(Collectors.toList());
+        }
+
+        return shops.stream().sorted(Comparator.comparingDouble(Shop::getSort).reversed()).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Map<String, Object>> searchGroupByTags(String keyword, Integer categoryId, String tags) {
+        ShopExample shopExample = new ShopExample();
+        ShopExample.Criteria criteria = shopExample.createCriteria();
+        criteria.andNameLike("%" + keyword+ "%");
+        if (null != categoryId) {
+            criteria.andCategoryIdEqualTo(categoryId);
+        }
+        if (null != tags) {
+            criteria.andTagsEqualTo(tags);
+        }
+
+        List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+        Map<String, Object> tempMap = new HashMap<>();
+        List<Shop> shops = shopDAO.selectByExample(shopExample);
+        shops.forEach(u -> {
+            Integer num = (Integer)tempMap.get(u.getTags());
+            if (num == null) {
+                tempMap.put(u.getTags(), 1);
+                return;
+            }
+
+            tempMap.put(u.getTags(), num + 1);
+        });
+
+        tempMap.forEach((k, v) ->{
+            Map<String, Object> map = new HashMap<>();
+            map.put("tags", k);
+            map.put("num", v);
+            result.add(map);
+        });
+        return result;
     }
 }

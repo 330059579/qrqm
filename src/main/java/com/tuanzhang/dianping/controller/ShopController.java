@@ -3,6 +3,7 @@ package com.tuanzhang.dianping.controller;
 import com.tuanzhang.dianping.common.BusinessException;
 import com.tuanzhang.dianping.common.CommonRes;
 import com.tuanzhang.dianping.common.EmBusinessError;
+import com.tuanzhang.dianping.model.Category;
 import com.tuanzhang.dianping.model.Shop;
 import com.tuanzhang.dianping.service.CategoryService;
 import com.tuanzhang.dianping.service.ShopService;
@@ -54,7 +55,13 @@ public class ShopController {
         }
 
 
-        
-
+        List<Shop> shopList = shopService.search(longitude, latitude, keyword,orderby, categoryId, tags);
+        List<Category> categories = categoryService.selectAll();
+        List<Map<String, Object>> maps = shopService.searchGroupByTags(keyword, categoryId, tags);
+        Map<String, Object> resMap = new HashMap<>();
+        resMap.put("shop",shopList);
+        resMap.put("category",categories);
+        resMap.put("tags", maps);
+        return CommonRes.create(resMap);
     }
 }
