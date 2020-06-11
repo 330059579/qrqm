@@ -5,6 +5,7 @@ import com.tuanzhang.dianping.model.ShopExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ShopDAO {
     int countByExample(ShopExample example);
@@ -28,4 +29,6 @@ public interface ShopDAO {
     int updateByPrimaryKeySelective(Shop record);
 
     int updateByPrimaryKey(Shop record);
+
+    List<Map<String, Object>> buildEsQuery(@Param("sellerId")Integer sellerId, @Param("categoryId")Integer categoryId, @Param("shopId")Integer shopId);
 }
