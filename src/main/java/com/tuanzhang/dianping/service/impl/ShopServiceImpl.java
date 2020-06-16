@@ -7,10 +7,9 @@ import com.tuanzhang.dianping.common.CommonUtil;
 import com.tuanzhang.dianping.common.EmBusinessError;
 import com.tuanzhang.dianping.dal.ShopDAO;
 import com.tuanzhang.dianping.info.Point2D;
-import com.tuanzhang.dianping.model.Category;
-import com.tuanzhang.dianping.model.Seller;
-import com.tuanzhang.dianping.model.Shop;
-import com.tuanzhang.dianping.model.ShopExample;
+import com.tuanzhang.dianping.model.*;
+import com.tuanzhang.dianping.recommend.RecommendService;
+import com.tuanzhang.dianping.recommend.RecommendSortService;
 import com.tuanzhang.dianping.service.CategoryService;
 import com.tuanzhang.dianping.service.SellerService;
 import com.tuanzhang.dianping.service.ShopService;
@@ -48,6 +47,10 @@ public class ShopServiceImpl implements ShopService {
     private SellerService sellerService;
     @Resource
     private RestHighLevelClient restHighLevelClient;
+    @Resource
+    private RecommendService recommendService;
+    @Resource
+    private RecommendSortService recommendSortService;
 
     @Override
     public Shop create(Shop shop) throws BusinessException {
@@ -103,8 +106,15 @@ public class ShopServiceImpl implements ShopService {
 
     @Override
     public List<Shop> recommend(BigDecimal longitude, BigDecimal latitude) {
-        ShopExample example = new ShopExample();
-        List<Shop> shops = shopDAO.selectByExample(example);
+        List<Integer> shopIdList = recommendService.recall(148);
+        System.out.println(shopIdList);
+        shopIdList = recommendSortService.sort(shopIdList, 148);
+        System.out.println(shopIdList);
+        List<Shop> shops  = shopIdList.stream().map(id ->{
+            return get(id);
+        }).collect(Collectors.toList());
+     /*   ShopExample example = new ShopExample();
+        List<Shop> shops = shopDAO.selectByExample(example);*/
         shops.forEach(u -> {
             Point2D pointA = new Point2D(longitude, latitude);
             Point2D pointb = new Point2D(u.getLongitude(), u.getLatitude());
@@ -115,7 +125,8 @@ public class ShopServiceImpl implements ShopService {
             u.setCategory(categoryService.get(u.getCategoryId()));
         });
 
-        return shops.stream().sorted(Comparator.comparingDouble(Shop::getSort).reversed()).collect(Collectors.toList());
+        /* return shops.stream().sorted(Comparator.comparingDouble(Shop::getSort).reversed()).collect(Collectors.toList());*/
+       return shops;
     }
 
     @Override

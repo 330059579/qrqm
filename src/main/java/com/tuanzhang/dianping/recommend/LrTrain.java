@@ -4,6 +4,7 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.ml.classification.LogisticRegression;
 import org.apache.spark.ml.classification.LogisticRegressionModel;
+import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator;
 import org.apache.spark.ml.linalg.VectorUDT;
 import org.apache.spark.ml.linalg.Vectors;
 import org.apache.spark.sql.Dataset;
@@ -15,10 +16,13 @@ import org.apache.spark.sql.types.Metadata;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
 
+import javax.sound.midi.Soundbank;
+import java.io.IOException;
+
 public class LrTrain {
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         //初始化Spark的运行环境
         SparkSession spark = SparkSession.builder().master("local").appName("DianPingApp").getOrCreate();
         //读取csv文件
@@ -38,7 +42,7 @@ public class LrTrain {
         });
 
         StructType schema = new StructType(new StructField[]{
-                new StructField("label", DataTypes.DoubleType, false, Metadata.empty())
+                new StructField("label", DataTypes.DoubleType, false, Metadata.empty()),
                 new StructField("features", new VectorUDT(), false, Metadata.empty())
         });
 
@@ -55,7 +59,15 @@ public class LrTrain {
         LogisticRegression lr = new LogisticRegression().setMaxIter(10).setRegParam(0.3).setElasticNetParam(0.8).setFamily("multinomial");
         //获得模型
         LogisticRegressionModel lrModel = lr.fit(trainingData);
+        //生产环境中可以将数据存到大数据平台
         lrModel.save("D:\\develop\\project\\lrmodel");
+
+        //获取测试数据的预测数据
+        Dataset<Row> prediction = lrModel.transform(testingData);
+        //评价指标
+        MulticlassClassificationEvaluator ev = new MulticlassClassificationEvaluator();
+        double accuracy = ev.setMetricName("accuracy").evaluate(prediction);
+        System.out.println("accuracy=" + accuracy);
     }
 
 }
